@@ -53,7 +53,7 @@ while 1:
 	if k == 27:
 		break
 
-# Close the window
+# Close the
 cap.release()
 
 # De-allocate any associated memory usage
