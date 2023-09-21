@@ -3,6 +3,10 @@
 # where its functionality resides
 import cv2
 
+
+#
+import time
+
 # load the required trained XML classifiers
 # https://github.com/Itseez/opencv/blob/master/
 # data/haarcascades/haarcascade_frontalface_default.xml
@@ -19,6 +23,9 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
+
+
+
 
 # loop runs if capturing has been initialized.
 while 1:
