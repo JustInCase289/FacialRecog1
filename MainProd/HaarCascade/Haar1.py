@@ -21,7 +21,6 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
 
-
 # Initialize variables for frame rate calculation
 frame_count = 0
 start_time = time.time()
@@ -50,6 +49,14 @@ while 1:
         # To draw a rectangle in eyes
         for (ex, ey, ew, eh) in eyes:
             cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 127, 255), 2)
+
+            # Apply Gaussian blur to the face and eyes ROIs
+            # roi_color_blurred = cv2.GaussianBlur(roi_color, (15, 15), 0)
+            # img[y:y + h, x:x + w] = roi_color_blurred
+
+            # Apply Bilateral filter to the face and eyes ROIs
+            roi_color_blurred = cv2.bilateralFilter(roi_color, 100, 250, 250)  # Adjust parameters as needed
+            img[y:y + h, x:x + w] = roi_color_blurred
 
     # Display an image in a window
     cv2.imshow('img', img)
