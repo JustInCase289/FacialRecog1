@@ -1,8 +1,8 @@
 import cv2
-import dlib
+from mtcnn import MTCNN
 
-# Load the face detector model from dlib
-detector = dlib.get_frontal_face_detector()
+# Initialize the MTCNN face detector
+detector = MTCNN()
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
@@ -10,11 +10,11 @@ cap = cv2.VideoCapture(0)
 while True:
     ret, frame = cap.read()  # Read a frame from the webcam
 
-    # Detect faces in the frame using dlib
-    faces = detector(frame)
+    # Detect faces in the frame using MTCNN
+    faces = detector.detect_faces(frame)
 
     for face in faces:
-        x, y, w, h = face.left(), face.top(), face.width(), face.height()
+        x, y, w, h = face['box']
 
         # Extract the face region
         face_roi = frame[y:y + h, x:x + w]
