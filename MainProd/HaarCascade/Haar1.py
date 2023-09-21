@@ -2,9 +2,6 @@
 # import libraries of python OpenCV
 # where its functionality resides
 import cv2
-
-
-#
 import time
 
 # load the required trained XML classifiers
@@ -25,7 +22,9 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 cap = cv2.VideoCapture(0)
 
 
-
+# Initialize variables for frame rate calculation
+frame_count = 0
+start_time = time.time()
 
 # loop runs if capturing has been initialized.
 while 1:
@@ -55,13 +54,23 @@ while 1:
     # Display an image in a window
     cv2.imshow('img', img)
 
+    # Increment the frame count
+    frame_count += 1
+
+    # Calculate and display frame rate every 30 frames (adjust as needed)
+    if frame_count % 30 == 0:
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        frame_rate = frame_count / elapsed_time
+        print(f"Frame Rate: {frame_rate:.2f} fps")
+        frame_count = 0
+        start_time = time.time()
+
     # Wait for Esc key to stop
     k = cv2.waitKey(30) & 0xff
     if k == 27:
         break
 
-# Close the
+# Release the camera and close all OpenCV windows
 cap.release()
-
-# De-allocate any associated memory usage
 cv2.destroyAllWindows()
