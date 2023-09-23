@@ -25,17 +25,32 @@ cap = cv2.VideoCapture(0)
 frame_count = 0
 start_time = time.time()
 
+# Skip every second frame to hopefully improve performance
+frame_skip = 2
+
+
+# Adjust the resolution of the captured frames
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # this is the magic!
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+# Define the region of interest (ROI)
+roi_x1, roi_x2, roi_y1, roi_y2 = 100, 540, 100, 380  # Adjust these coordinates as needed
+
 # loop runs if capturing has been initialized.
 while 1:
 
     # reads frames from a camera
     ret, img = cap.read()
 
+    # Crop the frame to the defined ROI
+    img = img[roi_y1:roi_y2, roi_x1:roi_x2]
+
     # convert to gray scale of each frames
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Detects faces of different sizes in the input image
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    faces = face_cascade.detectMultiScale(gray, 1.1, 3, minSize=(30, 30))
 
     for (x, y, w, h) in faces:
         # To draw a rectangle in a face
@@ -55,7 +70,7 @@ while 1:
             # img[y:y + h, x:x + w] = roi_color_blurred
 
             # Apply Bilateral filter to the face and eyes ROIs
-            roi_color_blurred = cv2.bilateralFilter(roi_color, 100, 250, 250)  # Adjust parameters as needed
+            roi_color_blurred = cv2.bilateralFilter(roi_color, 100, 100, 200)  # Adjust parameters as needed
             img[y:y + h, x:x + w] = roi_color_blurred
 
     # Display an image in a window
