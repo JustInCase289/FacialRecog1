@@ -18,6 +18,9 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 # Trained XML file for detecting eyes
 eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
+
+profile_cascade = cv2.CascadeClassifier('haarcascade_profileface.xml')
+
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
 
@@ -25,32 +28,20 @@ cap = cv2.VideoCapture(0)
 frame_count = 0
 start_time = time.time()
 
-# Skip every second frame to hopefully improve performance
-frame_skip = 2
-
-
-# Adjust the resolution of the captured frames
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # this is the magic!
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-# Define the region of interest (ROI)
-roi_x1, roi_x2, roi_y1, roi_y2 = 100, 540, 100, 380  # Adjust these coordinates as needed
-
 # loop runs if capturing has been initialized.
 while 1:
 
     # reads frames from a camera
     ret, img = cap.read()
 
-    # Crop the frame to the defined ROI
-    img = img[roi_y1:roi_y2, roi_x1:roi_x2]
-
     # convert to gray scale of each frames
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Detects faces of different sizes in the input image
-    faces = face_cascade.detectMultiScale(gray, 1.1, 3, minSize=(30, 30))
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    # Detects the side profile of face
+    side_faces = profile_cascade.detectMultiScale(gray, 1.1, 5)
 
     for (x, y, w, h) in faces:
         # To draw a rectangle in a face
@@ -63,15 +54,15 @@ while 1:
 
         # To draw a rectangle in eyes
         for (ex, ey, ew, eh) in eyes:
-            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 127, 255), 2)
+            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 200, 300), 2)
 
             # Apply Gaussian blur to the face and eyes ROIs
-            # roi_color_blurred = cv2.GaussianBlur(roi_color, (15, 15), 0)
-            # img[y:y + h, x:x + w] = roi_color_blurred
+            roi_color_blurred = cv2.GaussianBlur(roi_color, (15, 15), 75)
+            img[y:y + h, x:x + w] = roi_color_blurred
 
             # Apply Bilateral filter to the face and eyes ROIs
-            roi_color_blurred = cv2.bilateralFilter(roi_color, 100, 100, 200)  # Adjust parameters as needed
-            img[y:y + h, x:x + w] = roi_color_blurred
+            # roi_color_blurred = cv2.bilateralFilter(roi_color, 5, 5, 5)  # Adjust parameters as needed
+            # img[y:y + h, x:x + w] = roi_color_blurred
 
     # Display an image in a window
     cv2.imshow('img', img)
