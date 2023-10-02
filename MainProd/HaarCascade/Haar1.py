@@ -1,3 +1,5 @@
+# THIS CODE HAS BEEN DEPRECIATED AS PROJECT HAS BEEN CHANGED TO IMAGES
+
 # OpenCV program to detect face in real time
 # import libraries of python OpenCV
 # where its functionality resides
@@ -19,7 +21,7 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 
-profile_cascade = cv2.CascadeClassifier('haarcascade_profileface.xml')
+# profile_cascade = cv2.CascadeClassifier('haarcascade_profileface.xml')
 
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
@@ -41,11 +43,11 @@ while 1:
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     # Detects the side profile of face
-    side_faces = profile_cascade.detectMultiScale(gray, 1.1, 5)
+    # side_faces = profile_cascade.detectMultiScale(gray, 1.1, 5)
 
     for (x, y, w, h) in faces:
         # To draw a rectangle in a face
-        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 0), 2)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 255), 2)
         roi_gray = gray[y:y + h, x:x + w]
         roi_color = img[y:y + h, x:x + w]
 
@@ -54,10 +56,10 @@ while 1:
 
         # To draw a rectangle in eyes
         for (ex, ey, ew, eh) in eyes:
-            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 200, 300), 2)
+            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 100, 150), 2)
 
             # Apply Gaussian blur to the face and eyes ROIs
-            roi_color_blurred = cv2.GaussianBlur(roi_color, (15, 15), 75)
+            roi_color_blurred = cv2.GaussianBlur(roi_color, (25, 25), 50)
             img[y:y + h, x:x + w] = roi_color_blurred
 
             # Apply Bilateral filter to the face and eyes ROIs
