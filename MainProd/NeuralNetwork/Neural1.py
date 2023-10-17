@@ -1,37 +1,33 @@
 import cv2
-from mtcnn import MTCNN
+import torch
+from torchvision.models.detection import fasterrcnn_resnet50_fpn
+from torchvision.transforms import functional as F
 
-# Initialize the MTCNN face detector
-detector = MTCNN()
+# Load pre-trained model
+model = fasterrcnn_resnet50_fpn(pretrained=True).eval()
 
-# Initialize the webcam
-cap = cv2.VideoCapture(0)
+# Load image
+image = cv2.imread('C:\\School\\599\\StockImages\\StockImageGroup3.jpg')
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-while True:
-    ret, frame = cap.read()  # Read a frame from the webcam
+# Convert to PyTorch tensor
+tensor_img = F.to_tensor(image_rgb).unsqueeze(0)
 
-    # Detect faces in the frame using MTCNN
-    faces = detector.detect_faces(frame)
+# Get predictions
+with torch.no_grad():
+    prediction = model(tensor_img)
 
-    for face in faces:
-        x, y, w, h = face['box']
+# Extract bounding boxes
+boxes = prediction[0]['boxes']
 
-        # Extract the face region
-        face_roi = frame[y:y + h, x:x + w]
+for box in boxes:
+    x1, y1, x2, y2 = map(int, box)
+    # Extract the face from the image
+    face = image[y1:y2, x1:x2]
+    # Blur the face
+    blurred_face = cv2.GaussianBlur(face, (99, 99), 30)
+    # Replace original face with blurred one
+    image[y1:y2, x1:x2] = blurred_face
 
-        # Apply blur to the face region
-        blurred_face = cv2.GaussianBlur(face_roi, (99, 99), 30)
-
-        # Replace the original face with the blurred face
-        frame[y:y + h, x:x + w] = blurred_face
-
-    # Display the processed frame
-    cv2.imshow('Face Blurring', frame)
-
-    # Exit when 'q' is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the webcam and close all OpenCV windows
-cap.release()
-cv2.destroyAllWindows()
+# Save or display the image
+cv2.imshow('output.jpg', image)
