@@ -1,3 +1,5 @@
+import time
+
 import cv2
 
 # Load the required trained XML classifiers
@@ -55,6 +57,10 @@ def is_face_processed(x, y, w, h):
     return False
 
 
+# Start the timer
+start_time = time.time()
+
+
 def process_face(x, y, w, h, img, gray, confidence_text):
     # Check if face has already been processed
     if is_face_processed(x, y, w, h):
@@ -86,6 +92,13 @@ for x, y, w, h, confidence_text in all_faces:
 
 # save_path = 'C:\\School\\599\\ProcessedImages\\test3.jpg'  # Change the path and filename as required
 # cv2.imwrite(save_path, img)
+
+# Stop the timer
+end_time = time.time()
+
+# Calculate the elapsed time
+elapsed_time = end_time - start_time
+print(f"Time taken to process the image: {elapsed_time:.2f} seconds")
 
 # Display an image in a window
 cv2.imshow('img', img)
