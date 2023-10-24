@@ -1,12 +1,23 @@
 import cv2
 from mtcnn import MTCNN
 import time
+import psutil
+
+
+def get_resource_usage():
+    cpu_usage = psutil.cpu_percent(interval=.1)
+    memory_info = psutil.virtual_memory()
+    memory_usage = memory_info.percent
+    return cpu_usage, memory_usage
+
+
+# Before running the main function
+cpu_before, mem_before = get_resource_usage()
 
 
 def display_blurred_faces(filename):
     # Load image using OpenCV
-    image = cv2.imread('C:\\Users\\bisho\\PycharmProjects\\FacialRecog\\MainProd\\TestImages'
-                       '\\StockImageGroup3.jpg')
+    image = cv2.imread(image_path)
 
     # Convert the image from BGR to RGB format (as MTCNN expects RGB)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -42,16 +53,24 @@ def display_blurred_faces(filename):
     # End the timer
     end_time = time.time()
 
+    # Measure resource usage after processing the image but before displaying it
+    cpu_after, mem_after = get_resource_usage()
+
     # Display the resulting image
     cv2.imshow('Blurred Faces', image)
     cv2.waitKey(0)  # Wait until a key is pressed
     cv2.destroyAllWindows()  # Close the window
 
     # Return the elapsed time
-    return end_time - start_time
+    return end_time - start_time, cpu_after, mem_after
 
+
+# Single image path variable
+image_path = 'C:\\Users\\bisho\\PycharmProjects\\FacialRecog\\MainProd\\TestImages\\StockImageGroup5.jpg'
 
 # Example usage
-elapsed_time = display_blurred_faces('C:\\Users\\bisho\\PycharmProjects\\FacialRecog\\MainProd\\TestImages'
-                                     '\\StockImageGroup3.jpg')
+elapsed_time, cpu_after, mem_after = display_blurred_faces(image_path)
+
 print(f"Time taken to process the image: {elapsed_time:.2f} seconds")
+print(f"CPU usage before: {cpu_before}% | After: {cpu_after}%")
+print(f"Memory usage before: {mem_before}% | After: {mem_after}%")
