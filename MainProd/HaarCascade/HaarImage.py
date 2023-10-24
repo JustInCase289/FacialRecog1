@@ -8,7 +8,9 @@ profile_cascade = cv2.CascadeClassifier('haarcascade_profileface.xml')
 eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 # Load an image from file
-img = cv2.imread('C:\\School\\599\\StockImages\\StockImageGroup3.jpg')  # Provide the path to your image
+img = cv2.imread('C:\\Users\\bisho\\PycharmProjects\\FacialRecog\\MainProd\\TestImages\\StockImageGroup4.jpg')
+# Provide the path to your image
+
 
 # Convert to gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
